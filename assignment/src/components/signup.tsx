@@ -11,8 +11,6 @@ export default function Signup() {
 
   const [username, setUsername] = useState('')
   const [address, setAddress] = useState('')
-  const [password, setpassword] = useState('')
-  const [confirmpassword, setconfirmpassword] = useState('')
   const navigate = useNavigate()
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [open, setOpen] = useState(false)
@@ -21,7 +19,7 @@ export default function Signup() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    axios.post('http://localhost:8000/Signup', { "username": username, "address": address, "password": password })
+    axios.post('http://localhost:8000/Signup', { "username": username, "address": address, })
       .then((res) => {
         console.log(res.data)
         if (res) {
@@ -51,19 +49,6 @@ export default function Signup() {
   }
 
 
-  function validatePassword(password: string): string | null {
-    if (password.length < 6) {
-      return 'Password must be at least 6 characters long';
-    }
-    return null;
-  }
-
-  function valiadateConfirmPassword(password: string, confirmpassword: string): string | null {
-    if (confirmpassword !== password) {
-      return 'not matching';
-    }
-    return null;
-  }
 
 
 
@@ -74,15 +59,12 @@ export default function Signup() {
     const data = {
       "username": username,
       "address": address,
-      "password": password,
     }
 
     const usernameError = validateUsername(username);
     const addressError = validateAddress(address);
-    const passwordError = validatePassword(password);
-    const confirmpasswordError = valiadateConfirmPassword(password, confirmpassword)
 
-    if (usernameError || addressError || passwordError || confirmpasswordError) {
+    if (usernameError || addressError) {
       console.error('Validation errors');
       return;
     }
@@ -146,23 +128,7 @@ export default function Signup() {
                                 />
 
 
-                                <TextField
-                                    label="Password"
-                                    variant="outlined"
-                                    type="password"
-                                    fullWidth
-                                    value={password}
-                                    onChange={(e) => setpassword(e.target.value)}
-                                    style={{ marginBottom: '1em' }}
-                                />
-
-                                <TextField
-                                    label="Confirm Password"
-                                    variant="outlined"
-                                    type="password"
-                                    fullWidth
-                                    style={{ marginBottom: '1em' }}
-                                />
+                              
                             </Box>
                             <Button
                                 type="submit"
