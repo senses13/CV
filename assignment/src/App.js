@@ -6,7 +6,7 @@ import Home from './components/home.tsx';
 import Form from './components/form.jsx'
 import { Protected, Protect } from "./protectedroute.tsx";
 import Resetpass from './components/resetpass.tsx';
-
+import Mainpage from './components/mainpage.jsx';
 
 function App() {
   return (
@@ -19,6 +19,7 @@ function App() {
           <Route path="/Home" element={<Protected><Home /></Protected>}></Route>
           <Route path="/home/Form" element={<Protected><Form /></Protected>} />
           <Route path="/resetpass" element={<Protected><Resetpass /></Protected>} />
+          <Route path="/mainpage" element={<Protected><Mainpage /></Protected>} />
           
           </Routes>
           </BrowserRouter>

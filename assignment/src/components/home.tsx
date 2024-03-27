@@ -62,6 +62,15 @@ function Home() {
   <Link to={'/resetpass'}>
     <Button variant='contained' sx={{ color: 'green', bgcolor: '#010114', '&:hover': { bgcolor: '#020432' }, position: 'fixed', top: 10, right: 100, fontSize: 14, fontFamily: 'roboto' }}>Change Password</Button>
   </Link>
+
+  <Link to={'/mainpage'} style={{ textDecoration: 'none', textAlign: 'center' }}>
+      <Card variant="outlined" className="card">
+        <CardContent className="card-content">
+          <Typography variant="h5" gutterBottom> Order here </Typography>
+        </CardContent>
+      </Card>
+    </Link>
+
 </div>
 
 

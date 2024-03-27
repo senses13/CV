@@ -17,19 +17,6 @@ export default function Signup() {
   const [alert, setAlert] = useState(null)
 
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    axios.post('http://localhost:8000/Signup', { "username": username, "address": address, })
-      .then((res) => {
-        console.log(res.data)
-        if (res) {
-          navigate('/')
-        }
-      })
-      .catch(err => console.log(err))
-
-  }
-
 
 
   function validateUsername(username: string): string | null {
@@ -52,7 +39,7 @@ export default function Signup() {
 
 
 
-  const handleSumit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e:any) => {
     e.preventDefault();
     setFormSubmitted(true)
 
@@ -69,15 +56,9 @@ export default function Signup() {
       return;
     }
     else {
-      axios.post('http://localhost:8000/register', data)
+      axios.post('http://localhost:8000/Signup', data)
         .then((res) => {
-          if (res.data === 'username already taken') {
-            setAlert(res.data)
-          }
-          else {
-            setOpen(true)
-            setTimeout(() => navigate('/'), 2500);
-          }
+          navigate('/')
         }).catch((err) => console.log(err))
     }
   }
