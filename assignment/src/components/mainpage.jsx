@@ -3,29 +3,40 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { Card, CardContent, Icon, Input } from '@mui/material';
-import { FormLabel, FormControl, FormControlLabel, RadioGroup, Radio } from '@mui/material';
 import { useState } from 'react';
-import Divider from '@mui/material';
-
-
-
-
-
-
-
-
-
-
+import axios from 'axios';
 
 
 
 export default function BasicModal() {
-    const [open, setOpen] = React.useState(false);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
+    const [menOpen, setMenOpen] = useState(false);
+    const [womenOpen, setWomenOpen] = useState(false);
+    const [kidsOpen, setKidsOpen] = useState(false);
+
+    const [washSelected, setWashSelected] = useState(false);
+    const [foldSelected, setFoldSelected] = useState(false);
+    const [dryCleanSelected, setDryCleanSelected] = useState(false);
+
+    const handleWashClick = () => setWashSelected(!washSelected);
+    const handleFoldClick = () => setFoldSelected(!foldSelected);
+    const handleDryCleanClick = () => setDryCleanSelected(!dryCleanSelected);
+
+    const handleResetButton = () => {
+        setWashSelected(false);
+        setFoldSelected(false);
+        setDryCleanSelected(false);
+    };
+
+ 
 
 
+
+    const handleMenOpen = () => setMenOpen(true);
+    const handleMenClose = () => setMenOpen(false);
+    const handleWomenOpen = () => setWomenOpen(true);
+    const handleWomenClose = () => setWomenOpen(false);
+    const handleKidOpen = () => setKidsOpen(true);
+    const handleKidClose = () => setKidsOpen(false);
 
     const [menshirt, setMenShirt] = useState(0);
     const [mentshirt, setMenTshirt] = useState(0);
@@ -39,7 +50,11 @@ export default function BasicModal() {
     const [kidstshirt, setKidsTshirt] = useState(0);
     const [kidspant, setKidsPant] = useState(0);
     const [kidsshorts, setKidsShorts] = useState(0);
-    const [price, setPrice] = useState(0);
+    const [wash, setWash] = useState(0);
+    const [fold, setFold] = useState(0);
+    const [dryclean, setDryClean] = useState(0);
+
+
 
 
     const handleReset = () => {
@@ -55,15 +70,56 @@ export default function BasicModal() {
         setKidsTshirt(0);
         setKidsPant(0);
         setKidsShorts(0);
-        setPrice(0);
+        setWash(0);
+        setFold(0);
+        setDryClean(0);
+        setWashSelected(false);
+        setFoldSelected(false);
+        setDryCleanSelected(false);
 
     };
 
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const username = localStorage.getItem('username')
+
+
+
+        const formData = {
+            'username': username,
+            'menshirt': menshirt,
+            'mentshirt': mentshirt,
+            'menpant': menpant,
+            'menshorts': menshorts,
+            'womenshirt': womenshirt,
+            'womentshirt': womentshirt,
+            'womenpant': womenpant,
+            'womenshorts': womenshorts,
+            'kidsshirt': kidsshirt,
+            'kidstshirt': kidstshirt,
+            'kidspant': kidspant,
+            'kidsshorts': kidsshorts,
+            'wash': wash,
+            'fold': fold,
+            'dryclean': dryclean,
+        }
+
+        setWash(washSelected ? 1 : 0);
+        setFold(foldSelected ? 1 : 0);
+        setDryClean(dryCleanSelected ? 1 : 0);
+
+        axios.post('http://localhost:8000/mainpage/items', formData)
+            .then((res) => {
+                if (res) {
+                    console.log(res)
+                }
+            }).catch((err) => console.log(err))
 
 
 
 
 
+    }
 
     const style = {
         position: 'absolute',
@@ -72,182 +128,211 @@ export default function BasicModal() {
         transform: 'translate(-50%, -50%)',
         width: 400,
         bgcolor: 'background.paper',
-        border: '2',
+        border: '2px solid #000',
         boxShadow: 24,
         p: 4,
     };
 
-
-
     return (
-
         <div>
-
-            <Button id="item-men" onClick={handleOpen} variant='contained' size="large" sx={{ color: 'white', bgcolor: '#010114', '&:hover': { bgcolor: '#020432' }, position: 'relative', top: 20, fontSize: 14, margin: 5 }}>Men</Button>
+            <Button id="item-men" onClick={handleMenOpen} variant='contained' size="large" sx={{ color: 'white', bgcolor: '#010114', '&:hover': { bgcolor: '#020432' }, position: 'relative', top: 20, fontSize: 14, margin: 5, width: '250px', height: '100px' }}>Men</Button>
             <Modal
-                open={open}
-                onClose={handleClose}
-
+                open={menOpen}
+                onClose={handleMenClose}
             >
                 <Box sx={style}>
-                    <Typography id="item-men" variant="h6" component="h2" sx={{ mt: 2 }}>
+                    <Typography variant="h6" component="h2">
                         Men's Items
                     </Typography>
-                    <div style={{ display: 'flex' }}>
-                        <label htmlFor="menshirt">Shirt </label>
-                        <button style={{ padding: 10 }} onClick={() => (menshirt > 0 ? setMenShirt(menshirt - 1) : 0)}>-</button>
-                        <input type="number" value={menshirt} onChange={e => setMenShirt(e.target.value)} />
-                        <button style={{ padding: 10 }} onClick={() => setMenShirt(menshirt + 1)}>+</button>
+                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                        <label htmlFor="menshirt" style={{ marginRight: '10px', minWidth: '80px' }}>Shirt</label>
+                        <Button onClick={() => (menshirt > 0 ? setMenShirt(menshirt - 1) : 0)} variant="outlined" size="small" style={{ minWidth: '40px', padding: '5px' }}>-</Button>
+                        <input type="number" value={menshirt} onChange={e => setMenShirt(e.target.value)} style={{ width: '50px', margin: '0 5px', textAlign: 'center' }} />
+                        <Button onClick={() => setMenShirt(menshirt + 1)} variant="outlined" size="small" style={{ minWidth: '40px', padding: '5px' }}>+</Button>
                     </div>
 
-                    <div style={{ display: 'flex' }}>
-                        <label htmlFor="mentshirt">Tshirt</label>
-                        <button style={{ padding: 10 }} onClick={() => (mentshirt > 0 ? setMenTshirt(mentshirt - 1) : 0)}>-</button>
-                        <input type="number" value={mentshirt} onChange={e => setMenTshirt(e.target.value)} />
-                        <button style={{ padding: 10 }} onClick={() => setMenTshirt(mentshirt + 1)}>+</button>
+                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                        <label htmlFor="mentshirt" style={{ marginRight: '10px', minWidth: '80px' }}>Tshirt</label>
+                        <Button onClick={() => (mentshirt > 0 ? setMenTshirt(mentshirt - 1) : 0)} variant="outlined" size="small" style={{ minWidth: '40px', padding: '5px' }}>-</Button>
+                        <input type="number" value={mentshirt} onChange={e => setMenTshirt(e.target.value)} style={{ width: '50px', margin: '0 5px', textAlign: 'center' }} />
+                        <Button onClick={() => setMenTshirt(mentshirt + 1)} variant="outlined" size="small" style={{ minWidth: '40px', padding: '5px' }}>+</Button>
                     </div>
 
-                    <div style={{ display: 'flex' }}>
-                        <label htmlFor="menpant">Pant</label>
-                        <button style={{ padding: 10 }} onClick={() => (menpant > 0 ? setMenPant(menpant - 1) : 0)}>-</button>
-                        <input type="number" value={menpant} onChange={e => setMenPant(e.target.value)} />
-                        <button style={{ padding: 10 }} onClick={() => setMenPant(menpant + 1)}>+</button>
+                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                        <label htmlFor="menpant" style={{ marginRight: '10px', minWidth: '80px' }}>Pant</label>
+                        <Button onClick={() => (menpant > 0 ? setMenPant(menpant - 1) : 0)} variant="outlined" size="small" style={{ minWidth: '40px', padding: '5px' }}>-</Button>
+                        <input type="number" value={menpant} onChange={e => setMenPant(e.target.value)} style={{ width: '50px', margin: '0 5px', textAlign: 'center' }} />
+                        <Button onClick={() => setMenPant(menpant + 1)} variant="outlined" size="small" style={{ minWidth: '40px', padding: '5px' }}>+</Button>
                     </div>
 
-                    <div style={{ display: 'flex' }}>
-                        <label htmlFor="menshorts">Shorts</label>
-                        <button style={{ padding: 10 }} onClick={() => (menshorts > 0 ? setMenShorts(menshorts - 1) : 0)}>-</button>
-                        <input type="number" value={menshorts} onChange={e => setMenShorts(e.target.value)} />
-                        <button style={{ padding: 10 }} onClick={() => setMenShorts(menshorts + 1)}>+</button>
+                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                        <label htmlFor="menshorts" style={{ marginRight: '10px', minWidth: '80px' }}>Shorts</label>
+                        <Button onClick={() => (menshorts > 0 ? setMenShorts(menshorts - 1) : 0)} variant="outlined" size="small" style={{ minWidth: '40px', padding: '5px' }}>-</Button>
+                        <input type="number" value={menshorts} onChange={e => setMenShorts(e.target.value)} style={{ width: '50px', margin: '0 5px', textAlign: 'center' }} />
+                        <Button onClick={() => setMenShorts(menshorts + 1)} variant="outlined" size="small" style={{ minWidth: '40px', padding: '5px' }}>+</Button>
                     </div>
-                    <Button>Add items</Button>
+
+
+                    <Button onClick={handleMenClose}>Close</Button>
                 </Box>
             </Modal>
 
-            <Button id="item-women" onClick={handleOpen} variant='contained' size="large" sx={{ color: 'white', bgcolor: '#010114', '&:hover': { bgcolor: '#020432' }, position: 'relative', top: 20, fontSize: 14, margin: 5 }}>Women</Button>
-
+            <Button id="item-women" onClick={handleWomenOpen} variant='contained' size="large" sx={{ color: 'white', bgcolor: '#010114', '&:hover': { bgcolor: '#020432' }, position: 'relative', top: 20, fontSize: 14, margin: 5, width: '250px', height: '100px' }}>Women</Button>
             <Modal
-                open={open}
-                onClose={handleClose}>
-
+                open={womenOpen}
+                onClose={handleWomenClose}
+            >
                 <Box sx={style}>
-                    <Typography id="item-women" variant="h6" component="h2" sx={{ mt: 2 }}>
+                    <Typography variant="h6" component="h2">
                         Women's Items
                     </Typography>
 
-                    <div style={{ display: 'flex' }}>
-                        <label htmlFor="womenshirt">Shirt</label>
-                        <button style={{ padding: 10 }} onClick={() => (womenshirt > 0 ? setWomenShirt(womenshirt - 1) : 0)}>-</button>
-                        <input type="number" value={womenshirt} onChange={e => setWomenShirt(e.target.value)} />
-                        <button style={{ padding: 10 }} onClick={() => setWomenShirt(womenshirt + 1)}>+</button>
+                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                        <label htmlFor="womenshirt" style={{ marginRight: '10px', minWidth: '80px' }}>Shirt</label>
+                        <Button onClick={() => (womenshirt > 0 ? setWomenShirt(womenshirt - 1) : 0)} variant="outlined" size="small" style={{ minWidth: '40px', padding: '5px' }}>-</Button>
+                        <input type="number" value={womenshirt} onChange={e => setWomenShirt(e.target.value)} style={{ width: '50px', margin: '0 5px', textAlign: 'center' }} />
+                        <Button onClick={() => setWomenShirt(womenshirt + 1)} variant="outlined" size="small" style={{ minWidth: '40px', padding: '5px' }}>+</Button>
                     </div>
 
-                    <div style={{ display: 'flex' }}>
-                        <label htmlFor="womentshirt">Tshirt</label>
-                        <button style={{ padding: 10 }} onClick={() => (womentshirt > 0 ? setWomenTshirt(womentshirt - 1) : 0)}>-</button>
-                        <input type="number" value={womentshirt} onChange={e => setWomenTshirt(e.target.value)} />
-                        <button style={{ padding: 10 }} onClick={() => setWomenTshirt(womentshirt + 1)}>+</button>
+                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                        <label htmlFor="womentshirt" style={{ marginRight: '10px', minWidth: '80px' }}>Tshirt</label>
+                        <Button onClick={() => (womentshirt > 0 ? setWomenTshirt(womentshirt - 1) : 0)} variant="outlined" size="small" style={{ minWidth: '40px', padding: '5px' }}>-</Button>
+                        <input type="number" value={womentshirt} onChange={e => setWomenTshirt(e.target.value)} style={{ width: '50px', margin: '0 5px', textAlign: 'center' }} />
+                        <Button onClick={() => setWomenTshirt(womentshirt + 1)} variant="outlined" size="small" style={{ minWidth: '40px', padding: '5px' }}>+</Button>
                     </div>
 
-                    <div style={{ display: 'flex' }}>
-                        <label htmlFor="womenpant">Pant</label>
-                        <button style={{ padding: 10 }} onClick={() => (womenpant > 0 ? setWomenPant(womenpant - 1) : 0)}>-</button>
-                        <input type="number" value={womenpant} onChange={e => setWomenPant(e.target.value)} />
-                        <button style={{ padding: 10 }} onClick={() => setMenPant(womenpant + 1)}>+</button>
+                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                        <label htmlFor="womenpant" style={{ marginRight: '10px', minWidth: '80px' }}>Pant</label>
+                        <Button onClick={() => (womenpant > 0 ? setWomenPant(womenpant - 1) : 0)} variant="outlined" size="small" style={{ minWidth: '40px', padding: '5px' }}>-</Button>
+                        <input type="number" value={womenpant} onChange={e => setWomenPant(e.target.value)} style={{ width: '50px', margin: '0 5px', textAlign: 'center' }} />
+                        <Button onClick={() => setWomenPant(womenpant + 1)} variant="outlined" size="small" style={{ minWidth: '40px', padding: '5px' }}>+</Button>
                     </div>
 
-                    <div style={{ display: 'flex' }}>
-                        <label htmlFor="womenshorts">Shorts</label>
-                        <button style={{ padding: 10 }} onClick={() => (womenshorts > 0 ? setWomenShorts(womenshorts - 1) : 0)}>-</button>
-                        <input type="number" value={womenshorts} onChange={e => setWomenShorts(e.target.value)} />
-                        <button style={{ padding: 10 }} onClick={() => setWomenShorts(womenshorts + 1)}>+</button>
+                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                        <label htmlFor="womenshorts" style={{ marginRight: '10px', minWidth: '80px' }}>Shorts</label>
+                        <Button onClick={() => (womenshorts > 0 ? setWomenShorts(womenshorts - 1) : 0)} variant="outlined" size="small" style={{ minWidth: '40px', padding: '5px' }}>-</Button>
+                        <input type="number" value={womenshorts} onChange={e => setWomenShorts(e.target.value)} style={{ width: '50px', margin: '0 5px', textAlign: 'center' }} />
+                        <Button onClick={() => setWomenShorts(womenshorts + 1)} variant="outlined" size="small" style={{ minWidth: '40px', padding: '5px' }}>+</Button>
                     </div>
 
                     <Button>Add items</Button>
-                </Box>
 
+
+                    <Button onClick={handleWomenClose}>Close</Button>
+                </Box>
             </Modal>
 
-            <Button id="item-kids" onClick={handleOpen} variant='contained' size="large" sx={{ color: 'white', bgcolor: '#010114', '&:hover': { bgcolor: '#020432' }, position: 'relative', top: 20, fontSize: 14, margin: 5 }}>Kids</Button>
-
+            <Button id="item-kids" onClick={handleKidOpen} variant='contained' size="large" sx={{ color: 'white', bgcolor: '#010114', '&:hover': { bgcolor: '#020432' }, position: 'relative', top: 20, fontSize: 14, margin: 5, width: '250px', height: '100px' }}>Kids</Button>
             <Modal
-                open={open}
-                onClose={handleClose}>
-
+                open={kidsOpen}
+                onClose={handleKidClose}
+            >
                 <Box sx={style}>
-                    <Typography id="item-kid" variant="h6" component="h2" sx={{ mt: 2 }}>
-                        Kids's Items
+                    <Typography variant="h6" component="h2">
+                        Kids' Items
                     </Typography>
 
-                    <div style={{ display: 'flex' }}>
-                        <label htmlFor="kidshirt">Shirt</label>
-                        <button style={{ padding: 10 }} onClick={() => (kidsshirt > 0 ? setKidsShirt(kidsshirt - 1) : 0)}>-</button>
-                        <input type="number" value={kidsshirt} onChange={e => setKidsShirt(e.target.value)} />
-                        <button style={{ padding: 10 }} onClick={() => setKidsShirt(kidsshirt + 1)}>+</button>
+                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                        <label htmlFor="kidshirt" style={{ marginRight: '10px', minWidth: '80px' }}>Shirt</label>
+                        <Button onClick={() => (kidsshirt > 0 ? setKidsShirt(kidsshirt - 1) : 0)} variant="outlined" size="small" style={{ minWidth: '40px', padding: '5px' }}>-</Button>
+                        <input type="number" value={kidsshirt} onChange={e => setKidsShirt(e.target.value)} style={{ width: '50px', margin: '0 5px', textAlign: 'center' }} />
+                        <Button onClick={() => setKidsShirt(kidsshirt + 1)} variant="outlined" size="small" style={{ minWidth: '40px', padding: '5px' }}>+</Button>
                     </div>
 
-                    <div style={{ display: 'flex' }}>
-                        <label htmlFor="kidstshirt">Tshirt</label>
-                        <button style={{ padding: 10 }} onClick={() => (kidstshirt > 0 ? setKidsTshirt(kidstshirt - 1) : 0)}>-</button>
-                        <input type="number" value={kidstshirt} onChange={e => setKidsTshirt(e.target.value)} />
-                        <button style={{ padding: 10 }} onClick={() => setMenPant(kidstshirt + 1)}>+</button>
+                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                        <label htmlFor="kidstshirt" style={{ marginRight: '10px', minWidth: '80px' }}>Tshirt</label>
+                        <Button onClick={() => (kidstshirt > 0 ? setKidsTshirt(kidstshirt - 1) : 0)} variant="outlined" size="small" style={{ minWidth: '40px', padding: '5px' }}>-</Button>
+                        <input type="number" value={kidstshirt} onChange={e => setKidsTshirt(e.target.value)} style={{ width: '50px', margin: '0 5px', textAlign: 'center' }} />
+                        <Button onClick={() => setKidsTshirt(kidstshirt + 1)} variant="outlined" size="small" style={{ minWidth: '40px', padding: '5px' }}>+</Button>
                     </div>
 
-                    <div style={{ display: 'flex' }}>
-                        <label htmlFor="kidspant">Pant</label>
-                        <button style={{ padding: 10 }} onClick={() => (kidspant > 0 ? setKidsPant(kidspant - 1) : 0)}>-</button>
-                        <input type="number" value={kidspant} onChange={e => setKidsPant(e.target.value)} />
-                        <button style={{ padding: 10 }} onClick={() => setKidsPant(kidspant + 1)}>+</button>
+                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                        <label htmlFor="kidspant" style={{ marginRight: '10px', minWidth: '80px' }}>Pant</label>
+                        <Button onClick={() => (kidspant > 0 ? setKidsPant(kidspant - 1) : 0)} variant="outlined" size="small" style={{ minWidth: '40px', padding: '5px' }}>-</Button>
+                        <input type="number" value={kidspant} onChange={e => setKidsPant(e.target.value)} style={{ width: '50px', margin: '0 5px', textAlign: 'center' }} />
+                        <Button onClick={() => setKidsPant(kidspant + 1)} variant="outlined" size="small" style={{ minWidth: '40px', padding: '5px' }}>+</Button>
                     </div>
 
-                    <div style={{ display: 'flex' }}>
-                        <label htmlFor="kidsshorts">Shorts</label>
-                        <button style={{ padding: 10 }} onClick={() => (kidsshorts > 0 ? setKidsShorts(kidsshorts - 1) : 0)}>-</button>
-                        <input type="number" value={kidsshorts} onChange={e => setKidsShorts(e.target.value)} />
-                        <button style={{ padding: 10 }} onClick={() => setKidsShorts(kidsshorts + 1)}>+</button>
+                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                        <label htmlFor="kidsshorts" style={{ marginRight: '10px', minWidth: '80px' }}>Shorts</label>
+                        <Button onClick={() => (kidsshorts > 0 ? setKidsShorts(kidsshorts - 1) : 0)} variant="outlined" size="small" style={{ minWidth: '40px', padding: '5px' }}>-</Button>
+                        <input type="number" value={kidsshorts} onChange={e => setKidsShorts(e.target.value)} style={{ width: '50px', margin: '0 5px', textAlign: 'center' }} />
+                        <Button onClick={() => setKidsShorts(kidsshorts + 1)} variant="outlined" size="small" style={{ minWidth: '40px', padding: '5px' }}>+</Button>
                     </div>
 
-                    <Button>Add items</Button>
+
+                    <Button onClick={handleKidClose}>Close</Button>
                 </Box>
-
             </Modal>
 
-        <div>
-                <Button id="wash" variant='contained' size="large" sx={{color: 'white', bgcolor: '#010114', position: 'relative', top: 20, fontsize: 14, margin: 5}}>Wash</Button>
-
-                <Button id="fold" variant='contained' size="large" sx={{color: 'white', bgcolor: '#010114', position: 'relative', top: 20, fontsize: 14, margin: 5}}>Fold</Button>
-
-                <Button id="Dry clean" variant='contained' size="large" sx={{color: 'white', bgcolor: '#010114', position: 'relative', top: 20, fontsize:14, margin:5}}>Dry Clean</Button>
-
-
-            </div>
-
             <div>
-                <Button id="submit" variant='contained' size="large"> Proceed to checkout</Button>
+                {/* <Button id="wash" onClick={handleWashClick} variant='contained' size="large" sx={{ color: 'white', bgcolor: '#010114', position: 'relative', top: 20, fontSize: 14, margin: 5, width: '250px', height: '100px'}}>Wash</Button>
+                <Button id="fold" onClick={handleFoldClick} variant='contained' size="large" sx={{ color: 'white', bgcolor: '#010114', position: 'relative', top: 20, fontSize: 14, margin: 5,  width: '250px', height: '100px'}}>Fold</Button>
+                <Button id="dry-clean" onClick={handleDryCleanClick} variant='contained' size="large" sx={{ color: 'white', bgcolor: '#010114', position: 'relative', top: 20, fontSize: 14, margin: 5,  width: '250px', height: '100px' }}>Dry Clean</Button> */}
+
+                <div>
+                    <Button
+                        id="wash"
+                        variant="contained"
+                        size="large"
+                        sx={{
+                            color: 'white',
+                            bgcolor: washSelected ? '#8db600' : '#010114',
+                            position: 'relative',
+                            top: 20,
+                            fontSize: 14,
+                            margin: 5,
+                            width: '250px',
+                            height: '100px',
+                        }}
+                        onClick={handleWashClick}
+                    >
+                        {washSelected ? 'Wash ✓' : 'Wash'}
+                    </Button>
+                    <Button
+                        id="fold"
+                        variant="contained"
+                        size="large"
+                        sx={{
+                            color: 'white',
+                            bgcolor: foldSelected ? '#8db600' : '#010114',
+                            position: 'relative',
+                            top: 20,
+                            fontSize: 14,
+                            margin: 5,
+                            width: '250px',
+                            height: '100px',
+                        }}
+                        onClick={handleFoldClick}
+                    >
+                        {foldSelected ? 'Fold ✓' : 'Fold'}
+                    </Button>
+                    <Button
+                        id="dry-clean"
+                        variant="contained"
+                        size="large"
+                        sx={{
+                            color: 'white',
+                            bgcolor: dryCleanSelected ? '#8db600' : '#010114',
+                            position: 'relative',
+                            top: 20,
+                            fontSize: 14,
+                            margin: 5,
+                            width: '250px',
+                            height: '100px',
+                        }}
+                        onClick={handleDryCleanClick}
+                    >
+                        {dryCleanSelected ? 'Dry Clean ✓' : 'Dry Clean'}
+                    </Button>
+                </div>
 
             </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            <div>
+                <Button id="submit" onClick={handleSubmit} variant='contained' size="large" sx={{ color: 'white', bgcolor: '##8db600', position: 'relative', top: 20, fontSize: 14, margin: 5, }}>Proceed to Checkout</Button>
+                <Button id="reset" onClick={handleReset} variant='contained' size="large" sx={{ color: 'white', bgcolor: '#010114', position: 'relative', top: 20, fontSize: 14, margin: 5 }} >Reset</Button>
+            </div>
 
         </div>
-
     );
 }
