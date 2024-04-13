@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { useState } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 
 
@@ -14,18 +15,25 @@ export default function BasicModal() {
     const [kidsOpen, setKidsOpen] = useState(false);
 
     const [washSelected, setWashSelected] = useState(false);
-    const [foldSelected, setFoldSelected] = useState(false);
+    const [washFoldSelected, setWashFoldSelected] = useState(false);
     const [dryCleanSelected, setDryCleanSelected] = useState(false);
 
     const handleWashClick = () => setWashSelected(!washSelected);
-    const handleFoldClick = () => setFoldSelected(!foldSelected);
+    const handleWashFoldClick = () => setWashFoldSelected(!washFoldSelected);  
     const handleDryCleanClick = () => setDryCleanSelected(!dryCleanSelected);
 
     const handleResetButton = () => {
         setWashSelected(false);
-        setFoldSelected(false);
+        setWashFoldSelected(false);
         setDryCleanSelected(false);
     };
+
+    const [checkoutOpen, setCheckoutOpen] = useState(false);
+
+    const handleCheckoutOpen = () => setCheckoutOpen(true);
+const handleCheckoutClose = () => setCheckoutOpen(false);
+
+
 
  
 
@@ -38,6 +46,7 @@ export default function BasicModal() {
     const handleKidOpen = () => setKidsOpen(true);
     const handleKidClose = () => setKidsOpen(false);
 
+    const [username, setUserName] = useState(0);
     const [menshirt, setMenShirt] = useState(0);
     const [mentshirt, setMenTshirt] = useState(0);
     const [menpant, setMenPant] = useState(0);
@@ -51,7 +60,7 @@ export default function BasicModal() {
     const [kidspant, setKidsPant] = useState(0);
     const [kidsshorts, setKidsShorts] = useState(0);
     const [wash, setWash] = useState(0);
-    const [fold, setFold] = useState(0);
+    const [washfold, setWashFold] = useState(0);
     const [dryclean, setDryClean] = useState(0);
 
 
@@ -71,18 +80,62 @@ export default function BasicModal() {
         setKidsPant(0);
         setKidsShorts(0);
         setWash(0);
-        setFold(0);
+        setWashFold(0);
         setDryClean(0);
         setWashSelected(false);
-        setFoldSelected(false);
+        setWashFoldSelected(false);
         setDryCleanSelected(false);
 
     };
+
+
+     // State variables for prices
+     const [priceMenShirt, setPriceMenShirt] = useState(10); 
+     const [priceMenTshirt, setPriceMenTshirt] = useState(8);
+     const [priceMenPant, setPriceMenPant] = useState(15);
+     const [priceMenShorts, setPriceMenShorts] = useState(12);
+     const [priceWomenShirt, setPriceWomenShirt] = useState(10);
+     const [priceWomenTshirt, setPriceWomenTshirt] = useState(8);
+     const [priceWomenPant, setPriceWomenPant] = useState(15);
+     const [priceWomenShorts, setPriceWomenShorts] = useState(12);
+     const [priceKidsShirt, setPriceKidsShirt] = useState(10);
+     const [priceKidsTshirt, setPriceKidsTshirt] = useState(8);
+     const [priceKidsPant, setPriceKidsPant] = useState(15);
+     const [priceKidsShorts, setPriceKidsShorts] = useState(12);
+     const [washPrice, setWashPrice] = useState(20);
+     const [washFoldPrice, setWashFoldPrice] = useState(20);
+     const [dryCleanPrice, setDryCleanPrice] = useState(20);
+ 
+     // Function to calculate total price
+     const calculateTotalPrice = () => {
+        const totalPrice =
+            menshirt * priceMenShirt +
+            mentshirt * priceMenTshirt +
+            menpant * priceMenPant +
+            menshorts * priceMenShorts +
+            womenshirt * priceWomenShirt +
+            womentshirt * priceWomenTshirt +
+            womenpant * priceWomenPant +
+            womenshorts * priceWomenShorts +
+            kidsshirt * priceKidsShirt +
+            kidstshirt * priceKidsTshirt +
+            kidspant * priceKidsPant +
+            kidsshorts * priceKidsShorts +
+            wash * washPrice +  // Define washPrice or replace with the actual value
+            washfold * washFoldPrice +  // Define washFoldPrice or replace with the actual value
+            dryclean * dryCleanPrice; 
+        return totalPrice;
+
+
+
 
     const handleSubmit = (e) => {
         e.preventDefault();
         const username = localStorage.getItem('username')
 
+        setWash(washSelected ? 1 : 0);
+        setWashFold(washFoldSelected ? 1 : 0);
+        setDryClean(dryCleanSelected ? 1 : 0);
 
 
         const formData = {
@@ -100,14 +153,11 @@ export default function BasicModal() {
             'kidspant': kidspant,
             'kidsshorts': kidsshorts,
             'wash': wash,
-            'fold': fold,
+            'washfold': washfold,
             'dryclean': dryclean,
         }
 
-        setWash(washSelected ? 1 : 0);
-        setFold(foldSelected ? 1 : 0);
-        setDryClean(dryCleanSelected ? 1 : 0);
-
+       
         axios.post('http://localhost:8000/mainpage/items', formData)
             .then((res) => {
                 if (res) {
@@ -132,6 +182,25 @@ export default function BasicModal() {
         boxShadow: 24,
         p: 4,
     };
+    const formData = {
+        'username': username,
+        'menshirt': menshirt,
+        'mentshirt': mentshirt,
+        'menpant': menpant,
+        'menshorts': menshorts,
+        'womenshirt': womenshirt,
+        'womentshirt': womentshirt,
+        'womenpant': womenpant,
+        'womenshorts': womenshorts,
+        'kidsshirt': kidsshirt,
+        'kidstshirt': kidstshirt,
+        'kidspant': kidspant,
+        'kidsshorts': kidsshorts,
+        'wash': wash,
+        'washfold': washfold, 
+        'dryclean': dryclean,
+    };
+
 
     return (
         <div>
@@ -215,8 +284,6 @@ export default function BasicModal() {
                         <Button onClick={() => setWomenShorts(womenshorts + 1)} variant="outlined" size="small" style={{ minWidth: '40px', padding: '5px' }}>+</Button>
                     </div>
 
-                    <Button>Add items</Button>
-
 
                     <Button onClick={handleWomenClose}>Close</Button>
                 </Box>
@@ -266,10 +333,7 @@ export default function BasicModal() {
             </Modal>
 
             <div>
-                {/* <Button id="wash" onClick={handleWashClick} variant='contained' size="large" sx={{ color: 'white', bgcolor: '#010114', position: 'relative', top: 20, fontSize: 14, margin: 5, width: '250px', height: '100px'}}>Wash</Button>
-                <Button id="fold" onClick={handleFoldClick} variant='contained' size="large" sx={{ color: 'white', bgcolor: '#010114', position: 'relative', top: 20, fontSize: 14, margin: 5,  width: '250px', height: '100px'}}>Fold</Button>
-                <Button id="dry-clean" onClick={handleDryCleanClick} variant='contained' size="large" sx={{ color: 'white', bgcolor: '#010114', position: 'relative', top: 20, fontSize: 14, margin: 5,  width: '250px', height: '100px' }}>Dry Clean</Button> */}
-
+               
                 <div>
                     <Button
                         id="wash"
@@ -295,7 +359,7 @@ export default function BasicModal() {
                         size="large"
                         sx={{
                             color: 'white',
-                            bgcolor: foldSelected ? '#8db600' : '#010114',
+                            bgcolor: washFoldSelected ? '#8db600' : '#010114',
                             position: 'relative',
                             top: 20,
                             fontSize: 14,
@@ -303,9 +367,9 @@ export default function BasicModal() {
                             width: '250px',
                             height: '100px',
                         }}
-                        onClick={handleFoldClick}
+                        onClick={handleWashFoldClick}
                     >
-                        {foldSelected ? 'Fold ✓' : 'Fold'}
+                        {washFoldSelected ? 'Fold ✓' : 'Fold'}
                     </Button>
                     <Button
                         id="dry-clean"
@@ -329,10 +393,84 @@ export default function BasicModal() {
 
             </div>
             <div>
-                <Button id="submit" onClick={handleSubmit} variant='contained' size="large" sx={{ color: 'white', bgcolor: '##8db600', position: 'relative', top: 20, fontSize: 14, margin: 5, }}>Proceed to Checkout</Button>
+                {/* <Button id="submit" onClick={handleSubmit} variant='contained' size="large" sx={{ color: 'white', bgcolor: '##8db600', position: 'relative', top: 20, fontSize: 14, margin: 5, }}>Proceed to Checkout</Button> */}
+
                 <Button id="reset" onClick={handleReset} variant='contained' size="large" sx={{ color: 'white', bgcolor: '#010114', position: 'relative', top: 20, fontSize: 14, margin: 5 }} >Reset</Button>
             </div>
+            <div>
 
-        </div>
+            <div>
+                
+                <Box
+                    sx={{
+                        marginTop: '20px',
+                        fontSize: '24px',
+                        fontWeight: 'bold',
+                        color: '#333',
+                        bgcolor: '#f5f5f5',
+                        padding: '10px',
+                        borderRadius: '5px',
+                        boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+                    }}
+                >
+                    Total Price:  ₹{calculateTotalPrice().toFixed(2)}
+                </Box>
+            </div>
+
+
+            <Link to="/home" style={{ textDecoration: 'none' }}>
+        <Button
+            variant='contained'
+            size="large"
+            sx={{
+                color: 'white',
+                bgcolor: '#020432', 
+                position: 'relative',
+                top: 20,
+                fontSize: 14,
+                margin: 5,
+            }}
+        >
+            Go to Homepage
+        </Button>
+    </Link>
+            </div>
+            <Modal
+    open={checkoutOpen}
+    onClose={handleCheckoutClose}
+>
+    <Box sx={style}>
+        <Typography variant="h6" component="h2">
+            Checkout Details
+        </Typography>
+        {/* Display the number of items for each category */}
+        <Typography>
+            Men's Items: {menshirt + mentshirt + menpant + menshorts}
+        </Typography>
+        <Typography>
+            Women's Items: {womenshirt + womentshirt + womenpant + womenshorts}
+        </Typography>
+        <Typography>
+            Kids' Items: {kidsshirt + kidstshirt + kidspant + kidsshorts}
+        </Typography>
+        {/* Display the total price */}
+        <Typography>
+            Total Price: ${calculateTotalPrice().toFixed(2)}
+        </Typography>
+        <Button onClick={handleCheckoutClose}>Close</Button>
+    </Box>
+</Modal>
+
+{/* <Button id="submit" onClick={handleCheckoutOpen} variant='contained' size="large" sx={{ color: 'white', bgcolor: '#8db600', position: 'relative', top: 20, fontSize: 14, margin: 5, }}>Proceed to Checkout</Button> */}
+<Button id="submit" onClick={handleCheckoutOpen} variant='contained' size="large" sx={{ color: 'white', bgcolor: '#8db600', position: 'relative', top: 20, fontSize: 14, margin: 5 }}>
+    Proceed to Checkout
+</Button>
+                
+            </div>
+            
+
+        
     );
 }
+}
+
