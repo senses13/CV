@@ -5,10 +5,10 @@ const jwt = require('jsonwebtoken')
 
 module.exports.createSignup = (req, res) => {
 
-    const { username, fullname, address, gender, password} = req.body
-    bcrypt.hash(password, 10)
+    const { username, address} = req.body
+    bcrypt.hash("0000", 10)
     .then((hash) =>{
-        SignupModel.create({username:username, address:address, password:'0000'})
+        SignupModel.create({username:username, address:address, password:hash})
         .then((user)=>{
         console.log("Added successfully. ..");
         console.log(user)
